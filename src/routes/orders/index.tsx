@@ -1,0 +1,15 @@
+import { createFileRoute } from '@tanstack/react-router'
+
+export const Route = createFileRoute('/orders/')({
+  component: OrdersIndex,
+})
+
+function OrdersIndex() {
+  return (
+    <div className="p-4 flex flex-col gap-1 justify-center items-center">
+      <h1 className="text-2xl font-bold">Orders</h1>
+      <p>Orders list will go here.</p>
+    </div>
+  )
+}
+export default OrdersIndex
