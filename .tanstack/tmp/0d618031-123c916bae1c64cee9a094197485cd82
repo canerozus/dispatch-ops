@@ -10,53 +10,43 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as TestIndexRouteImport } from './routes/test/index'
-import { Route as OrdersIndexRouteImport } from './routes/orders/index'
+import { Route as OrderssIndexRouteImport } from './routes/orderss/index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TestIndexRoute = TestIndexRouteImport.update({
-  id: '/test/',
-  path: '/test/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const OrdersIndexRoute = OrdersIndexRouteImport.update({
-  id: '/orders/',
-  path: '/orders/',
+const OrderssIndexRoute = OrderssIndexRouteImport.update({
+  id: '/orderss/',
+  path: '/orderss/',
   getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/orders': typeof OrdersIndexRoute
-  '/test': typeof TestIndexRoute
+  '/orderss': typeof OrderssIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/orders': typeof OrdersIndexRoute
-  '/test': typeof TestIndexRoute
+  '/orderss': typeof OrderssIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/orders/': typeof OrdersIndexRoute
-  '/test/': typeof TestIndexRoute
+  '/orderss/': typeof OrderssIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/orders' | '/test'
+  fullPaths: '/' | '/orderss'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/orders' | '/test'
-  id: '__root__' | '/' | '/orders/' | '/test/'
+  to: '/' | '/orderss'
+  id: '__root__' | '/' | '/orderss/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  OrdersIndexRoute: typeof OrdersIndexRoute
-  TestIndexRoute: typeof TestIndexRoute
+  OrderssIndexRoute: typeof OrderssIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -68,18 +58,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/test/': {
-      id: '/test/'
-      path: '/test'
-      fullPath: '/test'
-      preLoaderRoute: typeof TestIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/orders/': {
-      id: '/orders/'
-      path: '/orders'
-      fullPath: '/orders'
-      preLoaderRoute: typeof OrdersIndexRouteImport
+    '/orderss/': {
+      id: '/orderss/'
+      path: '/orderss'
+      fullPath: '/orderss'
+      preLoaderRoute: typeof OrderssIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -87,8 +70,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  OrdersIndexRoute: OrdersIndexRoute,
-  TestIndexRoute: TestIndexRoute,
+  OrderssIndexRoute: OrderssIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
