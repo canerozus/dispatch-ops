@@ -11,24 +11,29 @@ interface OrdersTableProps {
 
 export function OrdersTable({ orders, isLoading }: OrdersTableProps) {
   if (isLoading) {
-    return <div className="p-8 text-center text-muted-foreground">Loading orders...</div>
+    return <div className="p-8 text-center">Loading orders...</div>
   }
 
   if (orders.length === 0) {
-    return <div className="p-8 text-center text-muted-foreground border rounded-lg bg-muted/10">No orders found matching your criteria.</div>
+    return <div className="p-8 text-center border rounded-lg bg-muted/10">No orders found matching your criteria.</div>
   }
+  const tableHeads = [
+    "Tracking ID",
+    "Customer",
+    "Status",
+    "ETA (mins)",
+    "Assignee",
+    "Action",
+  ];
 
   return (
     <div className="rounded-md border">
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Tracking ID</TableHead>
-            <TableHead>Customer</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>ETA (mins)</TableHead>
-            <TableHead>Assignee</TableHead>
-            <TableHead className="text-right">Action</TableHead>
+            {tableHeads.map((head) => (
+              <TableHead key={head}>{head}</TableHead>
+            ))}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -53,7 +58,7 @@ export function OrdersTable({ orders, isLoading }: OrdersTableProps) {
                 </TableCell>
                 <TableCell>
                   {order.courierId ? (
-                    <span className="text-sm font-medium">{order.courierId}</span> // TODO: Resolve name?
+                    <span className="text-sm font-medium">{order.courierId}</span>
                   ) : (
                     <span className="text-sm text-muted-foreground italic">Unassigned</span>
                   )}

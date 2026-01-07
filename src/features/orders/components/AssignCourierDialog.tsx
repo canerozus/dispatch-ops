@@ -18,17 +18,16 @@ const assignSchema = z.object({
 interface AssignCourierDialogProps {
   orderId: string
   currentCourierId?: string
-  trigger?: React.ReactNode
 }
 
-// Hardcoded for now, normally fetched from API
+// Hardcoded
 const MOCK_COURIERS: Courier[] = [
   { id: 'c1', name: 'Ali Veli' },
   { id: 'c2', name: 'Ayşe Yılmaz' },
   { id: 'c3', name: 'Mehmet Demir' },
 ]
 
-export function AssignCourierDialog({ orderId, currentCourierId, trigger }: AssignCourierDialogProps) {
+export function AssignCourierDialog({ orderId, currentCourierId }: AssignCourierDialogProps) {
   const [open, setOpen] = useState(false)
   const queryClient = useQueryClient()
 
@@ -77,7 +76,7 @@ export function AssignCourierDialog({ orderId, currentCourierId, trigger }: Assi
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        {trigger || <Button variant="outline">Assign Courier</Button>}
+      <Button variant="outline">Assign Courier</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>

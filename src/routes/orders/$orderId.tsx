@@ -1,8 +1,17 @@
+import { createFileRoute, Link } from '@tanstack/react-router'
+import { useSuspenseQuery } from '@tanstack/react-query'
+import { ordersQueries } from '../../features/orders/queries'
+import { OrderTimeline } from '../../features/orders/components/OrderTimeline'
+import { StatusBadge } from '../../features/orders/components/StatusBadge'
+import { Button } from '@/components/ui/button'
+import { ArrowLeft } from 'lucide-react'
 import { AssignCourierDialog } from '../../features/orders/components/AssignCourierDialog'
 
-// ... existing imports
-
-// ... Route definition
+export const Route = createFileRoute('/orders/$orderId')({
+  loader: ({ context: { queryClient }, params: { orderId } }: any) =>
+    queryClient.ensureQueryData(ordersQueries.detail(orderId)),
+  component: OrderDetail,
+})
 
 function OrderDetail() {
   const { orderId } = Route.useParams()
@@ -10,65 +19,66 @@ function OrderDetail() {
 
   return (
     <div className="container mx-auto py-8 px-4">
-      {/* ... header ... */}
       <div className="mb-6">
-        <Button variant="ghost" asChild className="pl-0 hover:bg-transparent hover:underline">
-            <Link to="/orders" search={{ page: 1, pageSize: 10, status: 'all', sort: 'eta' }}>
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to Orders
-            </Link>
+        <Button asChild className="pl-0 hover:bg-transparent hover:underline">
+          <Link to="/orders" search={{ page: 1, pageSize: 2, status: 'all', sort: 'eta' }}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Orders
+          </Link>
         </Button>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        <div className="space-y-6">
-            <div>
-                <h1 className="text-3xl font-bold tracking-tight mb-2">Order {order.trackingId}</h1>
-                <div className="flex items-center gap-2 text-muted-foreground">
-                    <span>{order.customerName}</span>
-                    <span>•</span>
-                    <span>{new Date(order.createdAt).toLocaleString()}</span>
-                </div>
-            </div>
+      <div className="flex flex-col gap-6">
 
-            <div className="p-6 border rounded-lg bg-card text-card-foreground shadow-sm">
-                <h3 className="font-semibold mb-4">Delivery Details</h3>
-                <div className="space-y-4">
-                    <div className="grid grid-cols-2 gap-1 text-sm">
-                        <span className="text-muted-foreground">Status:</span>
-                        <div><StatusBadge status={order.status} /></div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-1 text-sm">
-                        <span className="text-muted-foreground">ETA:</span>
-                        <span>{order.etaMinutes} minutes</span>
-                    </div>
-                    <div className="grid grid-cols-2 gap-1 text-sm">
-                        <span className="text-muted-foreground">Address:</span>
-                        <span>{order.address}</span>
-                    </div>
-                    <div className="grid grid-cols-2 gap-1 text-sm">
-                        <span className="text-muted-foreground">Courier:</span>
-                         {order.courierId ? (
-                            <span className="font-medium text-primary">{order.courierId}</span> 
-                          ) : (
-                            <span className="italic text-muted-foreground">Not assigned</span>
-                          )}
-                    </div>
-                </div>
-            </div>
-            
-             <div className="flex justify-end">
-                <AssignCourierDialog 
-                    orderId={order.id} 
-                    currentCourierId={order.courierId} 
-                    trigger={<Button size="lg">Assign Courier</Button>}
+        <div className="space-y-6">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight mb-2">Order {order.trackingId}</h1>
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <span>{order.customerName}</span>
+                <span>•</span>
+                <span>{new Date(order.createdAt).toLocaleString()}</span>
+              </div>
+              <div>
+                <AssignCourierDialog
+                  orderId={order.id}
+                  currentCourierId={order.courierId}
                 />
+              </div>
             </div>
+          </div>
+
+          <div className="p-6 border rounded-lg">
+            <h3 className="font-semibold mb-4">Delivery Details</h3>
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-1 text-sm">
+                <span>Status:</span>
+                <div><StatusBadge status={order.status} /></div>
+              </div>
+              <div className="grid grid-cols-2 gap-1 text-sm">
+                <span>ETA:</span>
+                <span>{order.etaMinutes} minutes</span>
+              </div>
+              <div className="grid grid-cols-2 gap-1 text-sm">
+                <span>Address:</span>
+                <span>{order.address}</span>
+              </div>
+              <div className="grid grid-cols-2 gap-1 text-sm">
+                <span>Courier:</span>
+                {order.courierId ? (
+                  <span className="font-medium">{order.courierId}</span>
+                ) : (
+                  <span className="italic text-muted-foreground">Not assigned</span>
+                )}
+              </div>
+            </div>
+          </div>
+
         </div>
 
-        <div className="p-6 border rounded-lg bg-card text-card-foreground shadow-sm"> 
-            <h3 className="font-semibold mb-6">Timeline</h3>
-            <OrderTimeline events={order.events} />
+        <div className="p-6 border rounded-lg">
+          <h3 className="font-semibold mb-6">Timeline</h3>
+          <OrderTimeline events={order.events} />
         </div>
       </div>
     </div>
