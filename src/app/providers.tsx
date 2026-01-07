@@ -6,7 +6,7 @@ import { router } from './router'
 export function AppProviders() {
   return (
     <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
+        <RouterProvider router={router} context={{ queryClient }} />
     </QueryClientProvider>
   )
 }

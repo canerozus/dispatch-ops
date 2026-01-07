@@ -1,16 +1,75 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { Link } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useSuspenseQuery } from '@tanstack/react-query'
+import { z } from 'zod'
+import { ordersQueries } from '../../features/orders/queries'
+import { OrdersTable } from '../../features/orders/components/OrdersTable'
+import { OrdersFiltersBar } from '../../features/orders/components/OrdersFilters'
+import type { OrdersFilters } from '../../features/orders/types'
+import { Button } from '@/components/ui/button'
+
+const ordersSearchSchema = z.object({
+  page: z.number().int().min(1).optional().default(1),
+  pageSize: z.number().int().min(1).optional().default(10),
+  q: z.string().optional(),
+  status: z.enum(['created', 'assigned', 'picked_up', 'delivered', 'cancelled', 'all']).optional().default('all'),
+  sort: z.enum(['eta', 'createdAt']).optional().default('eta'),
+})
 
 export const Route = createFileRoute('/orders/')({
+  validateSearch: (search) => ordersSearchSchema.parse(search),
+  loaderDeps: ({ search }) => ({ search }),
+  loader: ({ context: { queryClient }, deps: { search } }) => 
+    queryClient.ensureQueryData(ordersQueries.list(search as OrdersFilters)),
   component: OrdersIndex,
 })
 
 function OrdersIndex() {
+  const search = Route.useSearch()
+  const navigate = useNavigate({ from: Route.fullPath })
+  
+  const { data } = useSuspenseQuery(ordersQueries.list(search as OrdersFilters))
+
+  const setFilters = (newFilters: Partial<OrdersFilters>) => {
+    navigate({
+      search: (prev) => ({ ...prev, ...newFilters, page: 1 }), // Reset page on filter change
+    })
+  }
+
+  const handlePageChange = (newPage: number) => {
+    navigate({ search: (prev) => ({ ...prev, page: newPage }) })
+  }
+
   return (
-    <div className="p-4 flex flex-col gap-1 justify-center items-center">
-      <h1 className="text-2xl font-bold">Orders</h1>
-      <p>Orders list will go here.</p>
-      <Link to="/test">Go to test</Link>
+    <div className="container mx-auto py-8 px-4">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold tracking-tight">Orders</h1>
+      </div>
+
+      <OrdersFiltersBar filters={search as OrdersFilters} setFilters={setFilters} />
+
+      <OrdersTable orders={data.items} />
+
+      <div className="flex items-center justify-end space-x-2 py-4">
+        <div className="flex-1 text-sm text-muted-foreground">
+            Page {data.page} of {Math.ceil(data.total / data.pageSize)}
+        </div>
+        <div className="space-x-2">
+            <Button
+                variant="outline"
+                onClick={() => handlePageChange(search.page - 1)}
+                disabled={search.page <= 1}
+            >
+                Previous
+            </Button>
+            <Button
+                variant="outline"
+                onClick={() => handlePageChange(search.page + 1)}
+                disabled={search.page >= Math.ceil(data.total / data.pageSize)}
+            >
+                Next
+            </Button>
+        </div>
+      </div>
     </div>
   )
 }
