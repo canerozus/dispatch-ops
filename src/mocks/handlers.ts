@@ -1,12 +1,6 @@
 import { http, HttpResponse, delay } from 'msw'
 import type { Order, OrderStatus } from '../features/orders/types'
 
-// Mock Data
-const MOCK_COURIERS = [
-  { id: 'c1', name: 'Ali Veli' },
-  { id: 'c2', name: 'Ayşe Yılmaz' },
-  { id: 'c3', name: 'Mehmet Demir' },
-]
 
 const MOCK_ORDERS: Order[] = [
   {
@@ -48,6 +42,21 @@ const MOCK_ORDERS: Order[] = [
         { at: new Date(Date.now() - 1000 * 60 * 45).toISOString(), status: 'created' },
         { at: new Date(Date.now() - 1000 * 60 * 30).toISOString(), status: 'assigned' },
         { at: new Date(Date.now() - 1000 * 60 * 15).toISOString(), status: 'picked_up' }
+    ]
+  },
+  {
+    id: '4',
+    trackingId: 'TRK-60175',
+    customerName: 'Mustafa Kılıç',
+    address: 'Kızılcahamam Mah. 10. Sokak, Ankara',
+    etaMinutes: 0, // 0 minutes
+    status: 'delivered',
+    courierId: 'c3',
+    createdAt: new Date(Date.now() - 1000 * 60 * 10).toISOString(),
+    events: [
+        { at: new Date(Date.now() - 1000 * 60 * 10).toISOString(), status: 'created' },
+        { at: new Date(Date.now() - 1000 * 60 * 5).toISOString(), status: 'assigned' },
+        { at: new Date(Date.now()).toISOString(), status: 'delivered' }
     ]
   }
 ]
