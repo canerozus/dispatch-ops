@@ -6,19 +6,27 @@ import { OrdersTable } from '../../features/orders/components/OrdersTable'
 import { OrdersFiltersBar } from '../../features/orders/components/OrdersFilters'
 import type { OrdersFilters } from '../../features/orders/types'
 import { Button } from '@/components/ui/button'
-
+//url parametreleri zod ile validate edildi.
 const ordersSearchSchema = z.object({
   page: z.number().int().min(1).optional().default(1),
-  pageSize: z.number().int().min(1).optional().default(10),
+  pageSize: z.number().int().min(1).optional().default(2),
   q: z.string().optional(),
   status: z.enum(['created', 'assigned', 'picked_up', 'delivered', 'cancelled', 'all']).optional().default('all'),
-  sort: z.enum(['eta', 'createdAt']).optional().default('eta'),
+  sort: z.enum(['eta', 'createdAt']).optional().default('eta'), //burada enum olarak belirtildi fakat union type olarak tanımladık (syntax uzuyor zod'da)
 })
+
+export const DEFAULT_SEARCH: OrdersFilters = {
+  page: 1,
+  pageSize: 2,
+  q: '',
+  status: 'all',
+  sort: 'eta',
+}
 
 export const Route = createFileRoute('/orders/')({
   validateSearch: (search) => ordersSearchSchema.parse(search),
   loaderDeps: ({ search }) => ({ search }),
-  loader: ({ context: { queryClient }, deps: { search } }) =>
+  loader: ({ context: { queryClient }, deps: { search } }) => // Sayfa açılmadan önce veriyi çek veya cache'ten bul 
     queryClient.ensureQueryData(ordersQueries.list(search as OrdersFilters)),
   component: OrdersIndex,
 })
@@ -27,6 +35,7 @@ function OrdersIndex() {
   const search = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
 
+  //özellikleri burada vermek yerine queries.ts içerisinde verdik (placeholderdata queryfn vs)
   const { data } = useSuspenseQuery(ordersQueries.list(search as OrdersFilters))
 
   const setFilters = (newFilters: Partial<OrdersFilters>) => {

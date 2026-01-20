@@ -39,13 +39,17 @@ export function AssignCourierDialog({ orderId, currentCourierId }: AssignCourier
   })
 
   const mutation = useMutation({
-    mutationFn: (data: z.infer<typeof assignSchema>) => 
+    mutationFn: (data: z.infer<typeof assignSchema>) => // 1. Asıl işlem (API isteği)
       post<Order>(`/api/orders/${orderId}/assign`, data),
+    // 2. İstek atıldığı an (sunucudan cevap gelmeden hemen önce) çalışır
     onMutate: async (newData) => {
       await queryClient.cancelQueries({ queryKey: ordersKeys.detail(orderId) })
+      // Mevcut veriyi saklıyoruz (hata olursa geri dönebilmek için)
       const previousOrder = queryClient.getQueryData<Order>(ordersKeys.detail(orderId))
 
       if (previousOrder) {
+        // 3. Cache'i MANUEL olarak güncelle (Sanki sunucu başarılı demiş gibi)
+        // Ekranda anında "Assigned" yazar ve kurye adı görünür.
         queryClient.setQueryData<Order>(ordersKeys.detail(orderId), {
             ...previousOrder,
             courierId: newData.courierId,
@@ -58,11 +62,14 @@ export function AssignCourierDialog({ orderId, currentCourierId }: AssignCourier
       }
       return { previousOrder }
     },
+    // 4. Eğer hata olursa, eski veriyi (previousOrder) geri yükle
     onError: (_err, _newData, context) => {
         if (context?.previousOrder) {
+
             queryClient.setQueryData(ordersKeys.detail(orderId), context.previousOrder)
         }
     },
+    // 5. İşlem bittiğinde (başarılı veya hatalı) verinin en güncel halini sunucudan çek
     onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ordersKeys.all })
         setOpen(false)
@@ -108,6 +115,7 @@ export function AssignCourierDialog({ orderId, currentCourierId }: AssignCourier
                     </SelectContent>
                   </Select>
                   <FormMessage />
+                  {mutation.error && <p className=" text-sm text-red-500">{mutation.error.message || "Something went wrong"}</p>}
                 </FormItem>
               )}
             />

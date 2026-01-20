@@ -74,7 +74,7 @@ export const handlers = [
     const status = url.searchParams.get('status')
     const sort = url.searchParams.get('sort') || 'eta'
     const page = Number(url.searchParams.get('page') || '1')
-    const pageSize = Number(url.searchParams.get('pageSize') || '10')
+    const pageSize = Number(url.searchParams.get('pageSize') || '2')
 
     let filtered = [...MOCK_ORDERS]
 
