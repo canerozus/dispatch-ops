@@ -1,3 +1,4 @@
+// Layer: App Composition. Responsibility: App bootstrap. Business logic: NO.
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
@@ -6,7 +7,7 @@ import { worker } from './mocks/browser'
 
 // Enable mocking
 async function enableMocking() {
-    if (process.env.NODE_ENV === 'development') {
+    if (import.meta.env.DEV) {
         return worker.start()
     }
 }

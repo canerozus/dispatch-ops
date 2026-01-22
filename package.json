@@ -10,6 +10,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
+    "typecheck": "tsc -p tsconfig.app.json --noEmit",
+    "test": "node --import tsx --test --experimental-test-coverage KNOWLEDGE/pipelines/PL-003-Legacy-adapter-couriers-domain-types-MSW-handlers-updates/tests/couriers.test.ts",
     "preview": "vite preview"
   },
   "dependencies": {

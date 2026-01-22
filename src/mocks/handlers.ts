@@ -1,5 +1,7 @@
+// Layer: Infrastructure. Responsibility: MSW handler registration. Business logic: NO.
 import { http, HttpResponse, delay } from 'msw'
-import type { Order, OrderStatus } from '../features/orders/types'
+import type { Order } from '../features/orders/types'
+import { courierHandlers } from './handlers/couriers'
 
 
 const MOCK_ORDERS: Order[] = [
@@ -152,4 +154,5 @@ export const handlers = [
     MOCK_ORDERS[orderIndex] = updatedOrder
     return HttpResponse.json(updatedOrder)
   }),
+  ...courierHandlers,
 ]

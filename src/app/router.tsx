@@ -1,6 +1,6 @@
+// Layer: App Composition. Responsibility: Router construction. Business logic: NO.
 import { createRouter } from '@tanstack/react-router'
 import { routeTree } from '../routeTree.gen'
-import type { QueryClient } from '@tanstack/react-query'
 
 export const router = createRouter({
   routeTree,

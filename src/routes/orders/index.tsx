@@ -1,3 +1,5 @@
+// Layer: Entry. Responsibility: Orders route entry and delegation. Business logic: NO.
+/* eslint-disable react-refresh/only-export-components */
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { z } from 'zod'

@@ -1,3 +1,4 @@
+// Layer: Entry. Responsibility: Order detail route entry and delegation. Business logic: NO.
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { ordersQueries } from '../../features/orders/queries'
@@ -8,7 +9,7 @@ import { ArrowLeft } from 'lucide-react'
 import { AssignCourierDialog } from '../../features/orders/components/AssignCourierDialog'
 
 export const Route = createFileRoute('/orders/$orderId')({
-  loader: ({ context: { queryClient }, params: { orderId } }: any) =>
+  loader: ({ context: { queryClient }, params: { orderId } }) =>
     queryClient.ensureQueryData(ordersQueries.detail(orderId)),
   component: OrderDetail,
 })
